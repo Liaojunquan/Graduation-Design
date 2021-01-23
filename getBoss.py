@@ -4,7 +4,7 @@ from selenium.webdriver.common.action_chains import ActionChains
 import time
 import openpyxl
 
-file_name = r'C:\Users\Administrator\Desktop\广州游戏.xlsx'
+file_name = r'C:\Users\Administrator\Desktop\data.xlsx'
 
 def append_list_boss(ee_n, ee_l, ee_a, ee_d, ee_fl, ee_c, ee_link, ee_t_s, ee_b, ee_msg):  #职位名称  薪资  地区  经验|学历  福利  公司名称  链接  公司类型|大小  业务方向  职位描述和要求
         l = []
@@ -34,8 +34,8 @@ def append_list_boss(ee_n, ee_l, ee_a, ee_d, ee_fl, ee_c, ee_link, ee_t_s, ee_b,
                         l.append(sal_low)
                         l.append(sal_hight)
                         l.append(sal_avg)
-                elif ee_l.find('万/年') != -1:
-                        sal_low = int(float(ee_l.split('万/年')[0].strip()) * 10000 // 12)             #统一标准单位元/月
+                elif ee_l.find('元/时') != -1:
+                        sal_low = int(float(ee_l.split('元/时')[0].strip()) * 10 * 24)             #统一标准单位元/月
                         sal_hight = sal_low
                         sal_avg = sal_low
                         l.append(sal_low)
@@ -70,10 +70,10 @@ def append_list_boss(ee_n, ee_l, ee_a, ee_d, ee_fl, ee_c, ee_link, ee_t_s, ee_b,
                                 l.append(ee_l.strip())
                                 l.append("null")
                                 l.append("null")
-                elif ee_l.find('万/年') != -1:
+                elif ee_l.find('元/时') != -1:
                         try:
-                                sal_low = int(float(ee_l.split('万/年')[0].split('-')[0]) * 10000 // 12)            #统一标准单位元/月
-                                sal_hight = int(float(ee_l.split('万/年')[0].split('-')[1]) * 10000 // 12)
+                                sal_low = int(float(ee_l.split('元/时')[0].split('-')[0]) * 10 * 24)            #统一标准单位元/月
+                                sal_hight = int(float(ee_l.split('元/时')[0].split('-')[1]) * 10 * 24)
                                 sal_avg = (sal_low + sal_hight) // 2
                                 l.append(sal_low)
                                 l.append(sal_hight)
@@ -114,6 +114,9 @@ def append_list_boss(ee_n, ee_l, ee_a, ee_d, ee_fl, ee_c, ee_link, ee_t_s, ee_b,
         if ee_d.find('学历不限') != -1:
                 l.append(ee_d.split('学历不限')[0])        #经验要求
                 l.append("学历不限")                       #学历要求
+        elif ee_d.find('高中') != -1:
+                l.append(ee_d.split('高中')[0])
+                l.append("高中")
         elif ee_d.find('大专') != -1:
                 l.append(ee_d.split('大专')[0])
                 l.append("大专")
@@ -154,10 +157,20 @@ def append_list_boss(ee_n, ee_l, ee_a, ee_d, ee_fl, ee_c, ee_link, ee_t_s, ee_b,
         return l
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-keyWord = "引擎 客户端 开发 端游 手游 小游戏 Unity U3D u3d U3d UE4 ue4 Ue4 虚幻 cocos Cocos COCOS 2d 2D 3d 3D 测试 策划 美工 美术 设计 UI ui Ui 特效 动画 动作 服务器 维护 维稳 脚本 数据 前端 游戏"               
-stopWord = "销售 推广 地产 经理 主管 客服 人事 教育 讲师 分销 电商 投放 运营 翻译 英语 商务 老师 译员 发行 主播 直播 玩家 试玩 帮派"
+keyWord = """引擎 客户端 开发 端游 手游 小游戏 Unity U3D u3d U3d UE4 ue4 Ue4 UE 虚幻 cocos Cocos COCOS 2d 平面设计 三维 建模 渲染 视觉 MAYA Maya maya C4D c4d C4d 3DMAX 3dmax cad CAD ZBrush 
+2D 3d 3D 测试 策划 美工 美术 设计 UI ui Ui 特效 动画 动作 服务器 维护 维稳 脚本 数据 前端 WEB web Web 游戏 贴图 材质 影视 视频 拍摄 摄影 摄像 导演 编导 前期 后期 剪辑 分镜 AR VR 研发经理 全栈 
+小程序 数据库 数据管理 数据库管理 数据分析 DBA sql SQL Sql JAVA Java java C++ c++ C c Windows windows Android android 安卓 Python python 爬虫 图像识别 音频 音视频 VR  Vr vr 虚拟现实 AR ar 
+Ar 虚拟仿真 Unreal 交互开发 程序开发 计算机图形 Flash flash FLASH An AN MG mg Mg 二维 分镜 AE Ae ae PR pr Pr 达芬奇 多媒体 Davinci 调色 修图 调光 图片 数字媒体"""
+
+stopWord = """销售 推广 地产 经理 主管 客服 人事 教育 讲师 分销 电商 投放 运营 翻译 英语 商务 玩游戏 陪 质检 猎头 游戏机 装配 美主 gm gs GM GS Gm Gs 生产 * 激光 扫描 机械 公关 理财 
+教师 教研 老师 译员 发行 主播 直播 玩家 试玩 帮派 治疗 市场 营销 游戏店 服务员 体验 助教 经纪人 管培 投资 顾问 合伙人 投标 审核 制片人 演员 自动驾驶 售前 售后 院长 企业文化 体验馆 店长 
+接待 财务 店员 营业员 内容生态 看房 看楼 讲解 ARM arm 收账 会计 半导体 工艺 交通 能源 客户 射频 SAE 标注 漆 涂料 化工 甲油胶 建筑 建材 油墨 印刷 环保 化学 热转印 汽车 胶 粉体 灯光 CAE FAE 
+硬件 嵌入式 自动化 芯片 AE工程师 供应链 AE应用工程师 PR工程师 仪器 AE技术 驱动 电路 免费"""
+
+tagStopWord = "漆 涂料 化工 甲油胶 建筑 建材 油墨 印刷 环保 化学 汽车 胶 粉体 灯光 调研 营销 市场 客户 乙方 射频 销售 公关 电商 创意 推广 广告 运营 项目 执行 策划 创意"
 sw = stopWord.split(' ')
 kw = keyWord.split(' ')
+tsw = tagStopWord.split(' ')
 wb = openpyxl.open(file_name)       #打开文件
 ws = wb.active
 driver = webdriver.Chrome()
@@ -192,12 +205,30 @@ for i in range(len(job_list)):
  e_a = job_list[i].find_element_by_class_name("job-area").text      #获取公司地区
  tmp = 0
  while tmp < len(sw):
-  if e_n.find(sw[tmp]) != -1:             #包含停用词，跳到下一工作
+  if e_n.find(sw[tmp]) != -1:    #包含停用词，跳到下一工作
    break
   else:
    tmp += 1
- if tmp < len(sw):
+ if tmp  < len(sw):
   continue
+ e_tag = ""
+ try:
+  e_tag = job_list[i].find_element_by_class_name("info-append").find_element_by_class_name("tags").text   #职位标签
+  #print(e_tag)
+ except se.common.exceptions.NoSuchElementException:
+  print("\nNoSuchElementException\n")
+ except:
+  print("获取标签出现其它错误!")
+ else:
+  if e_tag != "":
+   tmp = 0
+   while tmp < len(tsw):
+    if e_tag.find(tsw[tmp]) != -1:             #包含标签停用词，跳到下一工作
+     break
+    else:
+     tmp += 1
+   if tmp < len(tsw):
+    continue
  tmp = 0
  while tmp < len(kw):
   if e_n.find(kw[tmp]) != -1:             #都不包含关键词，跳到下一工作
@@ -297,15 +328,33 @@ while driver.current_url != url_this:
   e_a = job_list[i].find_element_by_class_name("job-area").text      #获取公司地区
   tmp = 0
   while tmp < len(sw):
-   if e_n.find(sw[tmp]) != -1:             #包含停用词，跳到下一工作
+   if e_n.find(sw[tmp]) != -1:    #包含停用词，跳到下一工作
     break
    else:
     tmp += 1
-  if tmp < len(sw):
+  if tmp  < len(sw):
    continue
+  e_tag = ""
+  try:
+   e_tag = job_list[i].find_element_by_class_name("info-append").find_element_by_class_name("tags").text   #职位标签
+   print(e_tag)
+  except se.common.exceptions.NoSuchElementException:
+   print("\nNoSuchElementException\n")
+  except:
+   print("获取标签出现其它错误!")
+  else:
+   if e_tag != "":
+    tmp = 0
+    while tmp < len(tsw):
+     if e_tag.find(tsw[tmp]) != -1:             #包含标签停用词，跳到下一工作
+      break
+     else:
+      tmp += 1
+    if tmp < len(tsw):
+     continue
   tmp = 0
   while tmp < len(kw):
-   if e_n.find(kw[tmp]) != -1:            #都不包含关键词，跳到下一工作
+   if e_n.find(kw[tmp]) != -1:             #都不包含关键词，跳到下一工作
     break
    else:
     tmp += 1
