@@ -1,0 +1,1 @@
+pyinstaller -D UI_v8.py -p C:\Users\Administrator\AppData\Local\Programs\Python\Python36\Lib --add-data ".\*;."
